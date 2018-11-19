@@ -42,9 +42,9 @@ else:
     ord = ord
 
 # shortcut to bytes conversion (b prefix)
-def b(s): 
+def b(s, default_encoding): 
     if isinstance(s, basestring):
-        return s.encode("latin1")
+        return s.encode(default_encoding)
     elif isinstance(s, int):
         if PY3K:
             return bytes([s])  # http://bugs.python.org/issue4588

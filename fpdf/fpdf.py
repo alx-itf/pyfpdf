@@ -111,7 +111,7 @@ def load_cache(filename):
 class FPDF(object):
     "PDF Generation class"
 
-    def __init__(self, orientation = 'P', unit = 'mm', format = 'A4'):
+    def __init__(self, orientation = 'P', unit = 'mm', format = 'A4', default_encoding='latin-1'):
         # Initialization of properties
         self.offsets = {}               # array of object offsets
         self.page = 0                   # current page number
@@ -154,7 +154,8 @@ class FPDF(object):
                            'timesI': 'Times-Italic',
                            'timesBI': 'Times-BoldItalic',
                            'symbol': 'Symbol', 'zapfdingbats': 'ZapfDingbats'}
-        self.core_fonts_encoding = "latin-1"
+        self.default_encoding = default_encoding
+        self.core_fonts_encoding = self.default_encoding
 
         # Scale factor
         if unit == "pt":
@@ -1071,7 +1072,7 @@ class FPDF(object):
 
         if split_only:
             # restore writing functions
-            self._out, self.add_page = _out, _add_page 
+            self._out, self.add_page = _out, _add_page
             self.set_xy(*location)  # restore location
             return text_cells
 
@@ -1264,7 +1265,7 @@ class FPDF(object):
                 return txt.encode(self.core_fonts_encoding)
         else:
             if not self.unifontsubset and self.core_fonts_encoding:
-                return txt.encode(self.core_fonts_encoding).decode("latin-1")
+                return txt.encode(self.core_fonts_encoding).decode(self.default_encoding)
         return txt
 
     def _putpage(self, page, page_links):
@@ -1334,7 +1335,7 @@ class FPDF(object):
                         h = h_pt
                         annots += sprintf('/Dest [%d 0 R /XYZ 0 %.2f null]>>',
                                           1 + 2 * l[0], h - l[1] * self.k)
-                
+
                 # End links list
                 self._out(annots + ']')
             if self.pdf_version > '1.3':
@@ -1348,7 +1349,7 @@ class FPDF(object):
             if self.compress:
                 # manage binary data as latin1 until PEP461 or similar is
                 # implemented
-                p = content.encode("latin1") if PY3K else content
+                p = content.encode(self.default_encoding) if PY3K else content
                 p = zlib.compress(p)
             else:
                 p = content
