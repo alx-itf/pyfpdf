@@ -1237,7 +1237,7 @@ class FPDF(object):
         if PY3K:
             # manage binary data as latin1 until PEP461 or similar is
             # implemented
-            buffer = self.buffer.encode("latin1")
+            buffer = self.buffer.encode('latin-1')
         else:
             buffer = self.buffer
         if dest in ('I', 'D'):
@@ -1265,7 +1265,7 @@ class FPDF(object):
                 return txt.encode(self.core_fonts_encoding)
         else:
             if not self.unifontsubset and self.core_fonts_encoding:
-                return txt.encode(self.core_fonts_encoding).decode(self.default_encoding)
+                return txt.encode(self.core_fonts_encoding, 'ignore').decode(self.default_encoding, 'ignore')
         return txt
 
     def _putpage(self, page, page_links):
@@ -1956,10 +1956,10 @@ class FPDF(object):
         if PY3K and isinstance(s, bytes):
             # manage binary data as latin1 until PEP461-like function is
             # implemented
-            s = s.decode("latin1")
+            s = s.decode('latin-1')
         elif not PY3K and isinstance(s, unicode):
             # default encoding (font name and similar)
-            s = s.encode("latin1")
+            s = s.encode('latin-1')
         elif not isinstance(s, basestring):
             s = str(s)
         if (self.state == 2):
